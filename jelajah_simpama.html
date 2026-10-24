@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jelajah SimPama — Misi Memburu Harta Karun</title>
+<style>
+:root{
+  --forest:#173f35;--leaf:#2f7652;--mint:#dff3d5;--gold:#ffd166;--cream:#fff8e8;
+  --ink:#20352c;--coral:#f28b64;--sky:#bce7e8;--white:#fff;--shadow:0 12px 30px #102c2230;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Trebuchet MS,Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#c8ece8 0%,#e9f5d9 45%,#b4d99d 100%);min-height:100vh}
+button,select{font:inherit}
+button{cursor:pointer;border:0}
+button:focus-visible,select:focus-visible{outline:3px solid #f28b64;outline-offset:3px}
+.page{max-width:1080px;margin:auto;padding:18px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:900;color:var(--forest);font-size:clamp(1.1rem,3vw,1.55rem)}
+.logo{display:grid;place-items:center;width:48px;height:48px;border-radius:16px;background:var(--gold);box-shadow:0 4px 0 #d4a43b;font-size:1.7rem}
+.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{background:#ffffffc9;border:2px solid #ffffffa8;border-radius:999px;padding:9px 13px;font-weight:800}
+.panel{background:var(--cream);border:3px solid #fff;border-radius:26px;box-shadow:var(--shadow);overflow:hidden}
+.hero{position:relative;text-align:center;padding:clamp(22px,5vw,48px);background:linear-gradient(145deg,#fdf9e9,#e7f5d9)}
+.hero:before,.hero:after{position:absolute;font-size:clamp(2rem,6vw,4rem);opacity:.9}
+.hero:before{content:"🌴";left:4%;top:8%}.hero:after{content:"🦜";right:5%;top:12%}
+.eyebrow{display:inline-block;background:var(--mint);color:var(--forest);font-weight:900;border-radius:999px;padding:7px 12px;letter-spacing:.06em;text-transform:uppercase;font-size:.78rem}
+h1{font-size:clamp(2rem,6vw,4rem);line-height:1.05;color:var(--forest);margin:16px 0 10px}
+.subtitle{max-width:650px;margin:0 auto 20px;line-height:1.6;font-size:1.05rem}
+.start-controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px auto}
+select{border:2px solid #b8d2b5;border-radius:14px;padding:12px;background:#fff;color:var(--ink);font-weight:700}
+.btn{border-radius:14px;padding:13px 18px;font-weight:900;transition:transform .12s,filter .12s;box-shadow:0 4px 0 #163a2d30}
+.btn:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.btn:active{transform:translateY(2px);box-shadow:none}
+.btn-primary{background:var(--leaf);color:#fff}.btn-gold{background:var(--gold);color:#503c0d}.btn-light{background:#fff;color:var(--forest);border:2px solid #d8e8d0}
+.howto{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:18px}
+.how-card{background:#fff;border-radius:18px;padding:16px;text-align:center;border:2px solid #e5efdc}
+.how-card .emoji{font-size:2rem}.how-card h3{margin:8px 0 5px;color:var(--forest)}.how-card p{font-size:.92rem;line-height:1.45;margin:0}
+.game{padding:clamp(14px,3vw,28px)}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat{background:#e9f5df;border-radius:16px;padding:10px;text-align:center;border:2px solid #d8e9cb}
+.stat span{display:block;font-size:.78rem;font-weight:800;text-transform:uppercase;color:#54705b}.stat strong{font-size:1.25rem;color:var(--forest)}
+.map{background:linear-gradient(140deg,#b7dfaa,#d8edb8);border:3px dashed #7eae72;border-radius:20px;padding:15px;margin-bottom:18px}
+.map-title{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:900;color:var(--forest);margin-bottom:12px}
+.path{display:flex;align-items:center;justify-content:space-around;gap:8px;position:relative}
+.path:before{content:"";position:absolute;left:12%;right:12%;top:29px;border-top:5px dashed #8eaf67}
+.node{z-index:1;display:flex;flex-direction:column;align-items:center;gap:6px;width:30%;text-align:center;font-weight:800;font-size:.85rem}
+.node-icon{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:#fff;border:4px solid #8dbf78;font-size:1.7rem;box-shadow:0 3px 0 #72975f}
+.node.active .node-icon{background:var(--gold);border-color:#dcaa36;transform:scale(1.08)}
+.node.locked{opacity:.48}.node.done .node-icon{background:#d9f5ef;border-color:#54a68d}
+.question-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.question-card{background:#fff;border:2px solid #e5edda;border-radius:22px;padding:clamp(16px,3vw,25px)}
+.question-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.tag{font-size:.78rem;font-weight:900;border-radius:999px;padding:6px 10px;background:#eaf4dd;color:#426746}
+.tag.type{background:#fff0c7;color:#76520b}
+.question-card h2{font-size:clamp(1.25rem,3vw,1.8rem);line-height:1.35;margin:10px 0 18px;color:var(--forest)}
+.answers{display:grid;gap:10px}
+.answer{background:#f7f9f0;border:2px solid #dce7d2;border-radius:14px;padding:13px;text-align:left;font-weight:800;color:var(--ink);display:flex;gap:10px;align-items:center}
+.answer .letter{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:#e1ecd8;flex-shrink:0}
+.answer:hover:not(:disabled){border-color:var(--leaf);background:#eff8e9}
+.answer:disabled{cursor:default;opacity:1}
+.answer.correct{background:#dcf5e2;border-color:#32995c}.answer.wrong{background:#ffe4d8;border-color:#e37b5b}
+.feedback{min-height:60px;margin-top:14px;padding:12px;border-radius:14px;background:#f4f0dc;line-height:1.45;font-weight:700}
+.feedback.good{background:#dcf5e2;color:#205c35}.feedback.bad{background:#ffe4d8;color:#803b25}
+.question-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px}
+.side-card{border-radius:22px;padding:20px;background:linear-gradient(160deg,#d8efcd,#b6dfb2);border:2px solid #fff;display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;min-height:280px}
+.treasure{font-size:clamp(4rem,10vw,7rem);filter:drop-shadow(0 7px 2px #4d784c30);margin:4px}
+.side-card h3{color:var(--forest);margin:8px 0}.side-card p{line-height:1.5;margin:4px 0 14px}
+.progress-wrap{height:12px;background:#dfe8d5;border-radius:999px;overflow:hidden;margin:10px 0 0}.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#51a56a,#f7c64b);transition:width .3s}
+.hidden{display:none!important}
+.result{text-align:center;padding:clamp(22px,5vw,48px)}
+.result .big{font-size:5rem}.result h2{font-size:clamp(2rem,5vw,3rem);color:var(--forest);margin:8px 0}
+.result p{line-height:1.6;max-width:650px;margin:10px auto 18px}
+.result-stats{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:20px}
+.result-stats div{background:#e8f3dd;border-radius:16px;padding:14px 20px;min-width:115px}.result-stats strong{display:block;font-size:1.7rem;color:var(--forest)}
+.review{max-width:650px;margin:20px auto;text-align:left;background:#fff;border:2px solid #e1ead9;border-radius:18px;padding:16px}
+.review ul{padding-left:22px;line-height:1.7}
+.footer{text-align:center;font-size:.82rem;color:#355b43;padding:16px}
+@media(max-width:720px){.howto{grid-template-columns:1fr}.question-layout{grid-template-columns:1fr}.side-card{min-height:190px}.hud{grid-template-columns:repeat(2,1fr)}.path:before{left:15%;right:15%}.node-icon{width:50px;height:50px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="topbar">
+    <div class="brand"><div class="logo">🧭</div><div>JELAJAH <span style="color:#c17d24">SiPama</span><div style="font-size:.72rem;font-weight:700;letter-spacing:.04em">MISI MEMBURU HARTA KARUN</div></div></div>
+    <div class="top-actions"><span class="pill">📚 Bahasa Melayu · Tahun 4</span><button id="soundToggle" class="pill" aria-pressed="true">🔊 Bunyi: ON</button></div>
+  </header>
+
+  <section id="intro" class="panel">
+    <div class="hero">
+      <span class="eyebrow">Ekspedisi Bahasa Bermula!</span>
+      <h1>Jelajah<br>SimPama</h1>
+      <p class="subtitle">Terokai hutan bahasa, selesaikan teka-teki dan kumpulkan permata! Buktikan bahawa kamu boleh membezakan <b>simpulan bahasa</b> dengan <b>perumpamaan</b>.</p>
+      <div class="start-controls">
+        <label for="difficulty" class="pill">Tahap misi
+          <select id="difficulty" aria-label="Pilih tahap kesukaran">
+            <option value="easy">Peneroka 🌱</option>
+            <option value="normal" selected>Pengembara 🧭</option>
+            <option value="hard">Jaguh Bahasa 🏆</option>
+          </select>
+        </label>
+        <button id="startBtn" class="btn btn-primary">Mulakan pengembaraan ▶</button>
+      </div>
+      <p style="font-size:.9rem;margin:8px 0 0">⏱️ Masa setiap soalan berubah mengikut tahap misi.</p>
+    </div>
+    <div class="howto">
+      <div class="how-card"><div class="emoji">🗺️</div><h3>1. Teroka</h3><p>Jawab soalan di tiga lokasi misteri untuk membuka laluan seterusnya.</p></div>
+      <div class="how-card"><div class="emoji">💎</div><h3>2. Kumpul</h3><p>Jawapan betul memberikan permata. Jawab dengan teliti sebelum masa tamat!</p></div>
+      <div class="how-card"><div class="emoji">🏆</div><h3>3. Menang</h3><p>Kumpulkan markah dan buka peti harta karun di penghujung ekspedisi.</p></div>
+    </div>
+  </section>
+
+  <section id="game" class="panel game hidden" aria-live="polite">
+    <div class="hud">
+      <div class="stat"><span>💎 Markah</span><strong id="score">0</strong></div>
+      <div class="stat"><span>🧩 Soalan</span><strong id="questionCount">1/9</strong></div>
+      <div class="stat"><span>⏳ Masa</span><strong id="timer">20s</strong></div>
+      <div class="stat"><span>⭐ Tepat</span><strong id="accuracy">0%</strong></div>
+    </div>
+    <div class="map">
+      <div class="map-title"><span>🗺️ PETA EKSPEDISI</span><span id="mapStatus">Lokasi 1 daripada 3</span></div>
+      <div class="path">
+        <div class="node active" id="node0"><div class="node-icon">🌳</div><span>Hutan Simpulan</span></div>
+        <div class="node locked" id="node1"><div class="node-icon">🌉</div><span>Jambatan Perumpamaan</span></div>
+        <div class="node locked" id="node2"><div class="node-icon">🧰</div><span>Gua Harta Karun</span></div>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" id="progress"></div></div>
+    </div>
+    <div class="question-layout">
+      <div class="question-card">
+        <div class="question-meta"><span class="tag" id="stageTag">LOKASI 1</span><span class="tag type" id="kindTag">SIMPULAN BAHASA</span></div>
+        <h2 id="question">Soalan akan muncul di sini.</h2>
+        <div class="answers" id="answers"></div>
+        <div id="feedback" class="feedback" role="status">Pilih jawapan yang paling tepat.</div>
+        <div class="question-footer"><span id="hint" style="font-size:.88rem;color:#617363">💡 Baca ayat dengan teliti.</span><button id="nextBtn" class="btn btn-primary hidden">Seterusnya ➜</button></div>
+      </div>
+      <aside class="side-card">
+        <div class="treasure" id="sideEmoji">🌿</div>
+        <h3 id="sideTitle">Misi Hutan Simpulan</h3>
+        <p id="sideText">Cari makna tersembunyi di sebalik ungkapan bahasa.</p>
+        <div class="pill" id="gemCount">💎 0 permata</div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="result" class="panel result hidden">
+    <div class="big" id="resultEmoji">🏆</div>
+    <span class="eyebrow">Misi Selesai</span>
+    <h2 id="resultTitle">Tahniah, Pengembara!</h2>
+    <p id="resultMessage"></p>
+    <div class="result-stats">
+      <div><strong id="finalScore">0</strong><span>Markah</span></div>
+      <div><strong id="finalCorrect">0/9</strong><span>Jawapan betul</span></div>
+      <div><strong id="finalPercent">0%</strong><span>Ketepatan</span></div>
+    </div>
+    <div class="review"><h3>📖 Ingat semula!</h3><ul>
+      <li><b>Simpulan bahasa</b> ialah ungkapan yang mempunyai makna khusus, contohnya <i>ringan tulang</i> (rajin membantu).</li>
+      <li><b>Perumpamaan</b> membandingkan sesuatu dengan perkara lain, lazimnya menggunakan kata seperti <i>bagai, seperti, umpama</i> atau <i>laksana</i>.</li>
+      <li>Baca keseluruhan ayat untuk memahami maksud ungkapan.</li>
+    </ul></div>
+    <button id="restartBtn" class="btn btn-primary">🔄 Main semula</button>
+    <button id="homeBtn" class="btn btn-light">⌂ Kembali ke peta awal</button>
+  </section>
+  <div class="footer">Jelajah SimPama · Bahan pembelajaran Bahasa Melayu · Belajar sambil bermain 🌱</div>
+</div>
+<script>
+(() => {
+  "use strict";
+  const bank = [
+    {q:"Aina selalu membantu guru mengemas kelas. Aina seorang yang ______.",kind:"Simpulan bahasa",opts:["ringan tulang","kaki bangku","buah hati","mulut murai"],a:0,why:"Ringan tulang bermaksud rajin membantu atau melakukan kerja.",stage:0},
+    {q:"Apakah maksud simpulan bahasa “buah tangan”?",kind:"Simpulan bahasa",opts:["Buah yang dipetik dengan tangan","Hadiah yang dibawa ketika berkunjung","Orang yang suka makan buah","Kerja yang dibuat dengan tangan"],a:1,why:"Buah tangan ialah hadiah atau pemberian yang dibawa ketika melawat seseorang.",stage:0},
+    {q:"Amir tidak pandai bermain bola. Dia masih ______ dalam permainan itu.",kind:"Simpulan bahasa",opts:["ulat buku","kaki bangku","besar hati","ambil berat"],a:1,why:"Kaki bangku bermaksud orang yang tidak pandai bermain bola.",stage:0},
+    {q:"Kulit adik lembut ______ sutera.",kind:"Perumpamaan",opts:["bagai","kerana","supaya","tetapi"],a:0,why:"“Bagai sutera” membandingkan kelembutan kulit dengan sutera. Ini ialah perumpamaan.",stage:1},
+    {q:"Pilih perumpamaan yang sesuai: Wajahnya berseri ______ bulan purnama.",kind:"Perumpamaan",opts:["kaki bangku","bagai","buah tangan","ringan tulang"],a:1,why:"“Bagai bulan purnama” ialah perbandingan yang menggambarkan wajah berseri.",stage:1},
+    {q:"Apakah ciri yang biasa terdapat dalam perumpamaan?",kind:"Perumpamaan",opts:["Sentiasa menyebut nama orang","Mempunyai nombor dan ukuran","Membandingkan sesuatu, contohnya dengan kata “seperti” atau “bagai”","Mesti terdiri daripada satu perkataan"],a:2,why:"Perumpamaan membandingkan sesuatu dengan perkara lain dan lazimnya menggunakan kata seperti bagai, seperti atau umpama.",stage:1},
+    {q:"Farid suka membaca buku. Dia digelar ______.",kind:"Simpulan bahasa",opts:["kaki bangku","ulat buku","buah hati","panjang tangan"],a:1,why:"Ulat buku ialah orang yang sangat suka membaca.",stage:2},
+    {q:"Pilih ayat yang mengandungi perumpamaan.",kind:"Perumpamaan",opts:["Kakak ringan tulang membantu ibu.","Adik membawa buah tangan.","Suara penyanyi itu merdu seperti buluh perindu.","Abang menjadi buah hati keluarga."],a:2,why:"“Merdu seperti buluh perindu” menggunakan kata seperti untuk membuat perbandingan.",stage:2},
+    {q:"Siti menjaga adiknya dengan penuh kasih sayang. Dia ______ akan keselamatan adiknya.",kind:"Simpulan bahasa",opts:["ambil berat","kaki bangku","buah tangan","gelap mata"],a:0,why:"Ambil berat bermaksud mengambil perhatian atau prihatin terhadap seseorang atau sesuatu.",stage:2}
+  ];
+  const stages = [
+    {title:"Misi Hutan Simpulan",text:"Cari makna tersembunyi di sebalik ungkapan bahasa.",emoji:"🌳"},
+    {title:"Jambatan Perumpamaan",text:"Lintasi jambatan dengan mengenal pasti bahasa perbandingan.",emoji:"🌉"},
+    {title:"Gua Harta Karun",text:"Selesaikan misi terakhir untuk membuka peti harta karun.",emoji:"🧰"}
+  ];
+  const $ = id => document.getElementById(id);
+  let questions=[], index=0, score=0, correct=0, answered=false, remaining=20, timerId=null, soundOn=true, difficulty="normal", startedAt=0;
+  const timeFor = {easy:30,normal:20,hard:12};
+  const pointsFor = {easy:10,normal:15,hard:20};
+  function playTone(freq=600,duration=.12){
+    if(!soundOn) return;
+    try{
+      const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;
+      const ctx=new Ctx(),osc=ctx.createOscillator(),gain=ctx.createGain();
+      osc.type="sine";osc.frequency.value=freq;gain.gain.setValueAtTime(.08,ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+duration);
+      osc.connect(gain);gain.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+duration);
+      osc.onended=()=>ctx.close();
+    }catch(e){}
+  }
+  function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+  function startGame(){
+    clearInterval(timerId);difficulty=$("difficulty").value;
+    questions=bank.map(x=>({...x,opts:x.opts.map((text,i)=>({text,correct:i===x.a})).sort(()=>Math.random()-.5)}));
+    // Recalculate correct option after shuffling answer choices.
+    questions=shuffle(questions);
+    index=0;score=0;correct=0;startedAt=Date.now();
+    $("intro").classList.add("hidden");$("result").classList.add("hidden");$("game").classList.remove("hidden");
+    renderQuestion();
+  }
+  function renderQuestion(){
+    clearInterval(timerId);answered=false;remaining=timeFor[difficulty];
+    const q=questions[index],stage=q.stage;
+    $("score").textContent=score;$("questionCount").textContent=`${index+1}/${questions.length}`;
+    $("timer").textContent=remaining+"s";$("accuracy").textContent=correct?Math.round(correct/index*100)+"%":"0%";
+    $("stageTag").textContent=`LOKASI ${stage+1}`;$("kindTag").textContent=q.kind.toUpperCase();
+    $("question").textContent=q.q;$("answers").innerHTML="";$("feedback").className="feedback";$("feedback").textContent="Pilih jawapan yang paling tepat.";
+    $("nextBtn").classList.add("hidden");$("hint").textContent="💡 Baca ayat dengan teliti.";
+    $("sideEmoji").textContent=stages[stage].emoji;$("sideTitle").textContent=stages[stage].title;$("sideText").textContent=stages[stage].text;
+    $("gemCount").textContent=`💎 ${score} mata`;
+    for(let s=0;s<3;s++){const node=$("node"+s);node.classList.toggle("active",s===stage);node.classList.toggle("done",s<stage);node.classList.toggle("locked",s>stage);}
+    $("mapStatus").textContent=`Lokasi ${stage+1} daripada 3`;
+    $("progress").style.width=(index/questions.length*100)+"%";
+    q.opts.forEach((option,i)=>{
+      const b=document.createElement("button");b.className="answer";
+      const letter=document.createElement("span");letter.className="letter";letter.textContent=String.fromCharCode(65+i);
+      const txt=document.createElement("span");txt.textContent=option.text;
+      b.append(letter,txt);b.addEventListener("click",()=>chooseAnswer(i));$("answers").appendChild(b);
+    });
+    timerId=setInterval(()=>{
+      remaining--;$("timer").textContent=remaining+"s";
+      if(remaining<=5 && remaining>0)playTone(300,.06);
+      if(remaining<=0){clearInterval(timerId);timeUp();}
+    },1000);
+  }
+  function chooseAnswer(choice){
+    if(answered)return;answered=true;clearInterval(timerId);
+    const q=questions[index],picked=q.opts[choice],buttons=[...$("answers").querySelectorAll("button")];
+    buttons.forEach((b,i)=>{b.disabled=true;if(q.opts[i].correct)b.classList.add("correct");});
+    if(picked.correct){
+      correct++;score+=pointsFor[difficulty];$("feedback").className="feedback good";
+      $("feedback").textContent="✅ Betul! "+q.why;playTone(760,.18);
+    }else{
+      buttons[choice].classList.add("wrong");$("feedback").className="feedback bad";
+      $("feedback").textContent="Belum tepat. "+q.why;playTone(230,.22);
+    }
+    $("score").textContent=score;$("accuracy").textContent=Math.round(correct/(index+1)*100)+"%";$("gemCount").textContent=`💎 ${score} mata`;
+    $("nextBtn").textContent=index===questions.length-1?"Buka peti harta karun 🏆":"Seterusnya ➜";
+    $("nextBtn").classList.remove("hidden");$("hint").textContent=picked.correct?"Permata berjaya dikumpulkan!":"Teruskan mencuba, pengembara!";
+  }
+  function timeUp(){
+    if(answered)return;answered=true;
+    const q=questions[index],buttons=[...$("answers").querySelectorAll("button")];
+    buttons.forEach((b,i)=>{b.disabled=true;if(q.opts[i].correct)b.classList.add("correct");});
+    $("feedback").className="feedback bad";$("feedback").textContent="⏰ Masa tamat! "+q.why;
+    $("nextBtn").textContent=index===questions.length-1?"Buka peti harta karun 🏆":"Seterusnya ➜";
+    $("nextBtn").classList.remove("hidden");$("hint").textContent="Jangan risau—teruskan misi!";
+    playTone(230,.22);
+  }
+  function nextQuestion(){if(!answered)return;index++;if(index>=questions.length){showResult();return;}renderQuestion();}
+  function showResult(){
+    clearInterval(timerId);$("game").classList.add("hidden");$("result").classList.remove("hidden");
+    const max=questions.length*pointsFor[difficulty],pct=Math.round(correct/questions.length*100);
+    $("finalScore").textContent=score;$("finalCorrect").textContent=`${correct}/${questions.length}`;$("finalPercent").textContent=pct+"%";
+    $("resultEmoji").textContent=pct>=80?"🏆":pct>=50?"🧭":"🌱";
+    $("resultTitle").textContent=pct>=80?"Hebat, Jaguh Bahasa!":pct>=50?"Syabas, Pengembara!":"Teruskan Berlatih!";
+    $("resultMessage").textContent=pct>=80?`Kamu memperoleh ${score} mata daripada maksimum ${max}. Kamu hampir menguasai simpulan bahasa dan perumpamaan!`:pct>=50?`Kamu memperoleh ${score} mata daripada maksimum ${max}. Semak semula makna ungkapan dan cuba lagi untuk mendapatkan lebih banyak permata.`:`Kamu memperoleh ${score} mata daripada maksimum ${max}. Tidak mengapa—setiap percubaan membantu kamu belajar. Baca nota ringkas dan cuba sekali lagi!`;
+    $("progress").style.width="100%";playTone(pct>=80?880:550,.3);
+  }
+  function backHome(){clearInterval(timerId);$("game").classList.add("hidden");$("result").classList.add("hidden");$("intro").classList.remove("hidden");}
+  $("startBtn").addEventListener("click",startGame);
+  $("nextBtn").addEventListener("click",nextQuestion);
+  $("restartBtn").addEventListener("click",startGame);
+  $("homeBtn").addEventListener("click",backHome);
+  $("soundToggle").addEventListener("click",()=>{
+    soundOn=!soundOn;$("soundToggle").textContent=soundOn?"🔊 Bunyi: ON":"🔇 Bunyi: OFF";$("soundToggle").setAttribute("aria-pressed",String(soundOn));if(soundOn)playTone(600,.1);
+  });
+})();
+</script>
+</body>
+</html>
